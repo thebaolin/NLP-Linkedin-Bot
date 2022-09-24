@@ -11,6 +11,7 @@
     "cohere-ai": "^4.3.1",
     "cohere-js": "^1.0.21",
     "fetch": "^1.1.0",
+    "https-browserify": "^1.0.0",
     "node-fetch": "^3.2.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -40,5 +41,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "react-app-rewired": "^2.2.1"
   }
 }
