@@ -9,9 +9,8 @@ Cohere.init("fcCuE2KiwJqdaTYEoR2Al9RaVT13ltr32eo2cIw0");
 //IOstream
 const fs = require("fs").promises;
 
-let URL = "https://www.linkedin.com/jobs/view/mechanical-technician-1-at-northrop-grumman-3285901132?trk=org-job-results";
-
-let oFile = "tData/trainNG";
+let URL = "https://www.linkedin.com/jobs/view/3178546564/?alternateChannel=search&refId=uLeACUbPD1ZRMi5Ux1pIuQ%3D%3D&trackingId=jR6UMddU%2B7BEEKgS0YyGPg%3D%3D";
+let oFile = "tData/trainAP1";
 
 const getJobDesc = async (url) => {
 	try {
