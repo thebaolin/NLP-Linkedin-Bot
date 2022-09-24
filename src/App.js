@@ -2,12 +2,12 @@ import logo from './logo.svg';
 import './App.css';
 
 import { useState } from 'react';
-import Cohere from "cohere-js";
+const cohere = require('cohere-ai')
 
 const log_entry = (name, text) => [name, text];
 // DUM DUM DUM DUM
 const API_KEY = "fcCuE2KiwJqdaTYEoR2Al9RaVT13ltr32eo2cIw0";
-Cohere.init(API_KEY); // bad
+cohere.init(API_KEY); // bad
 
 /* function cohere_generate(gcc)
  *  */
