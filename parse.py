@@ -1,3 +1,4 @@
-print(res.text)
-print(res.status_code)
+def Parse(res):
+    print(res.text)
+    print(res.status_code)
 
