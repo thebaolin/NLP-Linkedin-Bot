@@ -21,36 +21,51 @@ async function cohere_generate(params) {
 
 /* function cohere_generate(gcc)
  *  */
+function random_integer_between(a, b) {
+  return Math.floor();
+}
 function SearchBar({logstuff, add_output, update_output}) {
   const [search_string, update_search_string] = useState("");
+
+  async function submit_entry() {
+    const prompt = search_string;
+    let current_output = add_output(logstuff, log_entry("User", prompt)) ;
+    update_output(current_output);
+    update_search_string("");
+    const lol = await cohere_generate({
+      prompt: "I would like an answer to this query: "+ prompt +". The response is:",
+      model: "xlarge",
+      temperature: 0.65,
+      k: 323,
+      tokens: random_integer_between(15, 40)
+    });
+    current_output = add_output(current_output, log_entry("Bot", `${lol.text}`));
+    console.log(current_output);
+    update_output(current_output);
+  }
 
   return (
     <div className="center-this">
       <div className="search-bar">
         <input type="text"
                value={search_string}
+               onKeyDown={
+               function (event) {
+                 if (event.keyCode === 13) {
+                   submit_entry();
+                 }
+               }
+               }
                onChange={
                function(event) {
                  update_search_string(event.target.value);
                }
                }
                placeholder="Enter a LinkedIn URL..."></input>
+        <button onClick={submit_entry}>
+          Enter
+        </button>
       </div>
-      <button onClick={
-      async function() {
-        {
-          const prompt = search_string;
-          let current_output = add_output(logstuff, log_entry("User", prompt)) ;
-          update_output(current_output);
-          update_search_string("");
-          const lol = await cohere_generate({prompt: prompt});
-          current_output = add_output(current_output, log_entry("Bot", `${prompt}${lol.text}`));
-          console.log(current_output);
-          update_output(current_output);
-        }
-      }}>
-        Enter
-      </button>
     </div>
         )
 }
