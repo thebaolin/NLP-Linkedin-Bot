@@ -30,18 +30,21 @@ function SearchBar({logstuff, add_output, update_output}) {
 
   async function submit_entry() {
     const prompt = search_string;
-    let current_output = add_output(logstuff, log_entry("User", prompt)) ;
+    let current_output = logstuff;
+
+    current_output = add_output(current_output, log_entry("User", prompt)) ;
     update_output(current_output);
     update_search_string("");
-    const lol = await cohere_generate({
-      prompt: `${all_concatenative_text}. I would like to be given this role because I have `+ prompt +"",
-      model: "xlarge",
-      temperature: 0.65,
-      k: 323,
-      tokens: random_integer_between(15, 40)
-    });
-    current_output = add_output(current_output, log_entry("Bot", `${lol.text}`));
-    console.log(current_output);
+    for (let i = 0; i < 2; ++i) {
+      const lol = await cohere_generate({
+        prompt: `${all_concatenative_text}. I would like to be given this role because I have `+ prompt +"",
+        model: "xlarge",
+        temperature: 0.65,
+        k: 323,
+        tokens: random_integer_between(15, 40)
+      });
+      current_output = add_output(current_output, log_entry("Bot", `${lol.text}`));
+    }
     update_output(current_output);
   }
 
@@ -62,7 +65,7 @@ function SearchBar({logstuff, add_output, update_output}) {
                  update_search_string(event.target.value);
                }
                }
-               placeholder="Enter a LinkedIn URL..."></input>
+               placeholder="Enter a LinkedIn URL or topics/keywords"></input>
         <button onClick={submit_entry}>
           Enter
         </button>
@@ -72,7 +75,12 @@ function SearchBar({logstuff, add_output, update_output}) {
 }
 
 function TextLine(context) {
-  return <p className="chat-line"><span className="chat-name">{context.name}: </span><span className="chat-text">{context.text}</span></p>;
+  function onclickhandlerlmao(event) {
+    navigator.clipboard.writeText(context.text);
+    /* I wanna use CSS animations, but god damn it I just wanna stop. */
+    window.alert("copied text line");
+  }
+  return <p className="chat-line"><span className="chat-name">{context.name}: </span><span className="chat-text"><a onClick={onclickhandlerlmao}>{context.text}</a></span></p>;
 }
 
 function OutputBox(context) {
@@ -86,7 +94,7 @@ function OutputBox(context) {
 }
 
 function SelectionChoice({text}) {
-  return <button class="selection-choice-button">${text}</button>
+  return <button class="selection-choice-button">{text}</button>
 }
 
 function SelectionChoiceMenu({choices}) {
@@ -95,10 +103,13 @@ function SelectionChoiceMenu({choices}) {
   } else {
     return (<>
         <div id="blackscreen">
+        <div id="selection-choice-menu">
+          {
+            choices.map((choice) => <SelectionChoice text={choice}></SelectionChoice>)
+          }
         </div>
-        <div>
         </div>
-      </>
+    </>
     );
   }
 }
@@ -106,7 +117,6 @@ function SelectionChoiceMenu({choices}) {
 function App() {
   const [text_line_log, update_text_line_log] = useState([
     log_entry("Bot", "Hello! Welcome to UHired!"),
-    log_entry("Bot", "To get started copy and paste a job link!"),
   ]);
 
   // garbage collector will fix this later...
