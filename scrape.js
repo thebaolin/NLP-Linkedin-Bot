@@ -30,10 +30,9 @@ const getJobDesc = async (url) => {
 const parseKW = async (jobDesc, training) => {
 	const keyWords = await Cohere.generate({
 		model: "large",
-		prompt: promptGen(training,jobDesc),
+		prompt: promptGen(training,jobDesc,"Extract the quality from the post:").toString(),
 		max_tokens: 10,
 		temperature: 0.1,
-		stop_sequences: ["\n"]
 	});
 	return `${keyWords.body.generations[0].text}`;
 }
@@ -48,23 +47,41 @@ function zip(a, b) {
 	return result;
 }
 
-const promptGen = (a, ex, fd) => {
+const promptGen2 = (a, ex, fd) => {
 	exam = [...a[0], ...[ex]];
 	label = [...a[1], ...[""]];
 	const full = zip(exam,label);
 	return full.map(([examp, label]) => ("\n---\n"+examp+"\n"+fd+label));
 }
+const promptGen = (full, ex, fd) => {
+	const fuller = [...full, [ex, ""]];
+	return fuller.map(([examp, label]) => ("\n---\n"+examp+"\n"+fd+label));
+}
 
-fs.readFile(iFile, 'utf8', (err, data) => {
-	if(err) {
-	} else {
-		const training_data = JSON.parse(data);
-		console.log(training_data);
+(async ()=> {
+	try {
+		const data = await fs.readFile(iFile, 'utf8');
+		/* skip first line hack */
+		let first_newline_location = 0;
+		let newline = false;
+		while (!newline) {
+			if (data[first_newline_location] == '\n') {
+				newline = true;
+			}
+			else
+				first_newline_location++;
+		}
+		const skipped = data.slice(first_newline_location+1, data.length);
+		//console.log(skipped);
+		const data_as_json = await JSON.parse(skipped);
+		const filtered     = data_as_json.filter(([a, b]) => (a.length && b.length));
+		//console.log(promptGen(filtered, "EX", "FD").toString());
+		console.log(await parseKW("BIG", filtered));
+	} catch (e) {
+		console.log(e);
 	}
-});
 
-;(async () => {
-//	const s = await getJobDesc(URL);
+/*	const s = await getJobDesc(URL);
 
 	try {
 //		await fs.writeFile(oFile, URL+"\n");
@@ -75,7 +92,5 @@ fs.readFile(iFile, 'utf8', (err, data) => {
 //		}
 	}catch (error) {
 		throw error;
-	}
+	}*/
 })();
-
-
