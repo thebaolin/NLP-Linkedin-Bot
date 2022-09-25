@@ -128,6 +128,7 @@ function App() {
 
   return (
     <div className="App">
+	  <Quotes/>
       <OutputBox output={text_line_log} />
       <SearchBar logstuff={text_line_log} add_output={add_output} update_output={update_text_line_log} />
       {/* <SelectionChoiceMenu choices={
