@@ -14,68 +14,33 @@ let URL = "https://www.linkedin.com/jobs/view/mechanical-technician-1-at-northro
 
 let iFile = "tData/movie";
 
-const getJobDesc = async (url) => {
+const getJobQuals = async (url) => {
 	try {
 		const { data } = await axios.get(url);
 		const $ = cheerio.load(data);
+		let sects = [];
+		let inter = [];
+		let quals = [];
 	
-		return $("div.show-more-less-html__markup").html().trim().replace( /(<\/([^>]+)>)/ig, '. ').replace( /(<([^>]+)>)/ig, '').split(". ");
+		sects = $("div.show-more-less-html__markup").html().split("<strong>");
+
+		for(let i =0;i<sects.length;i++){
+			if(!(sects[i].toLowerCase().includes('benefits'))){
+				inter.push(...sects[i].split("<"));
+			}
+		}
+
+		for(let i = 0;i<inter.length;i++){
+			if(inter[i].length>3 && inter[i].charAt(0) == 'l' && inter[i].charAt(1) == 'i'){
+				quals.push(inter[i].slice(3));
+			}
+		}
+		return quals;
 	} catch (error) {
 		throw error;
 	}
 };
 
-//req_ex = //list of tuples, training data
-
-const parseKW = async (jobDesc, training) => {
-	const keyWords = await Cohere.generate({
-		model: "large",
-		prompt: promptGen(training,jobDesc,"extract the movie title from the post:").toString(),
-		max_tokens: 10,
-		temperature: 0.1,
-	});
-	return `${keyWords.body.generations[0].text}`;
-}
-
-const promptGen = (full, ex, fd) => {
-	const fuller = [...full, ["", ex]];
-	return fuller.map(([label, examp]) => ("\n---\n"+examp+"\n"+fd+label));
-}
-
 (async ()=> {
-	try {
-		const data = await fs.readFile(iFile, 'utf8');
-		/* skip first line hack */
-		let first_newline_location = 0;
-		let newline = false;
-		while (!newline) {
-			if (data[first_newline_location] == '\n') {
-				newline = true;
-			}
-			else
-				first_newline_location++;
-		}
-		const skipped = data.slice(first_newline_location+1, data.length);
-		//console.log(skipped);
-		const data_as_json = await JSON.parse(skipped);
-		const filtered     = data_as_json.filter(([a, b]) => (a.length && b.length));
-		console.log(promptGen(filtered, "First poster in Pixar's Luca", "extract the movie title from the post:").toString());
-		console.log('\n\n');
-		console.log(await parseKW("First poster in Pixar's Luca", filtered));
-	} catch (e) {
-		console.log(e);
-	}
-
-/*	const s = await getJobDesc(URL);
-
-	try {
-//		await fs.writeFile(oFile, URL+"\n");
-		
-//		for(let i =0;i<s.length;i++){
-			
-//			await fs.appendFile(oFile, "{\"\", \""+s[i]+"\"}\n");
-//		}
-	}catch (error) {
-		throw error;
-	}*/
+	getJobQuals(URL).then((quali) => console.log(quali));
 })();
