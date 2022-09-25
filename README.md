@@ -3,10 +3,10 @@ Stony Brook University Hackathon Repo
 
 ## Team Members:
 Paulina Chang, Mandy Tang, Jerry Zhu, Ethan Taqbachneck
-
+##
 ###UHired:
 A linkedin-url based optimization bot, built to combat the possible bias that comes from an ATS Scan during the job application process, through the usage of NLP. 
-
+###
 ####What is an ATS?
 ATS stands for Applicant Tracking System, and is used by mainly software recruiters and employers to track candidates through the recruiting and hiring process. Because an ATS is used to further simplify and speed up the hiring process, candidates who don't pass the filter will automatically be rejected. 
 
