@@ -2,7 +2,7 @@
 Stony Brook University Hackathon Repo
 
 ## Team Members:
-Paulina Chang, Mandy Tang, Jerry Zhu, Ethan Taqbachneck
+Paulina Chang, Mandy Tang, Jerry Zhu, Ethan Tabachneck
 ##
 ### UHired:
 A linkedin-url based optimization bot, built to combat the possible bias that comes from an ATS Scan during the job application process, through the usage of NLP. 
