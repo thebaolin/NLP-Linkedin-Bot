@@ -12,7 +12,7 @@ const fs = require("fs").promises;
 
 let URL = "https://www.linkedin.com/jobs/view/mechanical-technician-1-at-northrop-grumman-3285901132?trk=org-job-results";
 
-let iFile = "tData/trainNG";
+let iFile = "tData/movie";
 
 const getJobDesc = async (url) => {
 	try {
@@ -30,32 +30,16 @@ const getJobDesc = async (url) => {
 const parseKW = async (jobDesc, training) => {
 	const keyWords = await Cohere.generate({
 		model: "large",
-		prompt: promptGen(training,jobDesc,"Extract the quality from the post:").toString(),
+		prompt: promptGen(training,jobDesc,"extract the movie title from the post:").toString(),
 		max_tokens: 10,
 		temperature: 0.1,
 	});
 	return `${keyWords.body.generations[0].text}`;
 }
 
-function zip(a, b) {
-	let result = [];
-	
-	for (let i = 0; i < a.length; ++i) {
-		result.push([a[i], b[i]]);
-	}
-
-	return result;
-}
-
-const promptGen2 = (a, ex, fd) => {
-	exam = [...a[0], ...[ex]];
-	label = [...a[1], ...[""]];
-	const full = zip(exam,label);
-	return full.map(([examp, label]) => ("\n---\n"+examp+"\n"+fd+label));
-}
 const promptGen = (full, ex, fd) => {
-	const fuller = [...full, [ex, ""]];
-	return fuller.map(([examp, label]) => ("\n---\n"+examp+"\n"+fd+label));
+	const fuller = [...full, ["", ex]];
+	return fuller.map(([label, examp]) => ("\n---\n"+examp+"\n"+fd+label));
 }
 
 (async ()=> {
@@ -75,8 +59,9 @@ const promptGen = (full, ex, fd) => {
 		//console.log(skipped);
 		const data_as_json = await JSON.parse(skipped);
 		const filtered     = data_as_json.filter(([a, b]) => (a.length && b.length));
-		//console.log(promptGen(filtered, "EX", "FD").toString());
-		console.log(await parseKW("BIG", filtered));
+		console.log(promptGen(filtered, "First poster in Pixar's Luca", "extract the movie title from the post:").toString());
+		console.log('\n\n');
+		console.log(await parseKW("First poster in Pixar's Luca", filtered));
 	} catch (e) {
 		console.log(e);
 	}
