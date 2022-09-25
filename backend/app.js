@@ -25,28 +25,28 @@ const query_question =  "extract the skills from the sentence:";
 
 const getJobQuals = async (url) => {
 	try {
-		const { data } = await axios.get(url);
-		const $ = cheerio.load(data);
-		let sects = [];
-		let inter = [];
-		let quals = [];
-	
-		sects = $("div.show-more-less-html__markup").html().split("<strong>");
+	const { data } = await axios.get(url);
+	const $ = cheerio.load(data);
+	let sects = [];
+	let inter = [];
+	let quals = [];
 
-		for(let i =0;i<sects.length;i++){
-			if(!(sects[i].toLowerCase().includes('benefits'))){
-				inter.push(...sects[i].split("<"));
-			}
-		}
+	sects = $("div.show-more-less-html__markup").html().split("<strong>") | "";
 
-		for(let i = 0;i<inter.length;i++){
-			if(inter[i].length>3 && inter[i].charAt(0) == 'l' && inter[i].charAt(1) == 'i'){
-				quals.push(inter[i].slice(3));
-			}
+	for(let i =0;i<sects.length;i++){
+		if(!(sects[i].toLowerCase().includes('benefits'))){
+			inter.push(...sects[i].split("<"));
 		}
-		return quals;
-	} catch (error) {
-		throw error;
+	}
+
+	for(let i = 0;i<inter.length;i++){
+		if(inter[i].length>3 && inter[i].charAt(0) == 'l' && inter[i].charAt(1) == 'i'){
+			quals.push(inter[i].slice(3));
+		}
+	}
+	return quals;
+	} catch(e) {
+		return ["Please Check URL, Unable to View"];
 	}
 };
 

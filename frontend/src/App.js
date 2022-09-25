@@ -43,7 +43,6 @@ function SearchBar({logstuff, add_output, update_output}) {
     update_output(current_output);
 	  if (is_valid_url(prompt)) {
 		  const a=(await asdf(prompt)).data;
-		  window.alert(a);
 		  console.log(a);
 		  for (let i = 0 ;i  < a.length; ++i) {
 			  current_output = add_output(current_output, log_entry("Bot", a[i]));
