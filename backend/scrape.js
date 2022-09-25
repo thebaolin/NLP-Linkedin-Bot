@@ -18,7 +18,7 @@ let iFile = "tData/trainAP";
 /* const query_question =  "extract the movie title from the post:"; */
 const query_question =  "extract the skills from the sentence:";
 
-const getJobQuals = async (url) => {
+export const getJobQuals = async (url) => {
 	try {
 		const { data } = await axios.get(url);
 		const $ = cheerio.load(data);

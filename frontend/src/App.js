@@ -20,12 +20,18 @@ async function cohere_generate(params) {
   const result = await axios.post("https://api.cohere.ai/generate", params, HEADER_FOR_REQUESTS);
   return result.data;
 }
+async function asdf(url) {
+	const result = await axios.get("http://localhost:5000/",  { crossdomain: true, params: { url:url }});
+	return result;
+}
 
 /* function cohere_generate(gcc)
  *  */
 function random_integer_between(a, b) {
   return Math.floor();
 }
+
+function is_valid_url(url) { try{new URL(url);return true;}catch(e){return false;}}
 function SearchBar({logstuff, add_output, update_output}) {
   const [search_string, update_search_string] = useState("");
 
@@ -35,17 +41,26 @@ function SearchBar({logstuff, add_output, update_output}) {
 
     current_output = add_output(current_output, log_entry("User", prompt)) ;
     update_output(current_output);
-    update_search_string("");
-    for (let i = 0; i < 2; ++i) {
-      const lol = await cohere_generate({
-        prompt: `${all_concatenative_text}. I would like to be given this role because I have `+ prompt +"",
-        model: "xlarge",
-        temperature: 0.65,
-        k: 323,
-        tokens: random_integer_between(15, 40)
-      });
-      current_output = add_output(current_output, log_entry("Bot", `${lol.text}`));
-    }
+	  if (is_valid_url(prompt)) {
+		  const a=(await asdf(prompt)).data;
+		  window.alert(a);
+		  console.log(a);
+		  for (let i = 0 ;i  < a.length; ++i) {
+			  current_output = add_output(current_output, log_entry("Bot", a[i]));
+		  }
+	  } else {
+		  update_search_string("");
+		  for (let i = 0; i < 2; ++i) {
+			  const lol = await cohere_generate({
+				  prompt: `${all_concatenative_text}. I would like to be given this role because I have `+ prompt +"",
+				  model: "xlarge",
+				  temperature: 0.65,
+				  k: 323,
+				  tokens: random_integer_between(15, 40)
+			  });
+			  current_output = add_output(current_output, log_entry("Bot", `${lol.text}`));
+		  }
+	  }
     update_output(current_output);
   }
 
@@ -128,7 +143,6 @@ function App() {
 
   return (
     <div className="App">
-	  <Quotes/>
       <OutputBox output={text_line_log} />
       <SearchBar logstuff={text_line_log} add_output={add_output} update_output={update_text_line_log} />
       {/* <SelectionChoiceMenu choices={
