@@ -30,8 +30,11 @@ const getJobQuals = async (url) => {
 	let sects = [];
 	let inter = [];
 	let quals = [];
-
-	sects = $("div.show-more-less-html__markup").html().split("<strong>") | "";
+	try{
+	sects = $("div.show-more-less-html__markup").html().split("<strong>")
+	} catch(error) {
+		sects = "";
+	}
 
 	for(let i =0;i<sects.length;i++){
 		if(!(sects[i].toLowerCase().includes('benefits'))){
