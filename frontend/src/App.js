@@ -32,35 +32,62 @@ function random_integer_between(a, b) {
 }
 
 function is_valid_url(url) { try{new URL(url);return true;}catch(e){return false;}}
+
+function is_punctuation(c) {
+  return (c == '?' || c == '.' ||
+          c == '.' || c == ',' ||
+          c == '!' || c == '-');
+}
+function sanitize_phrase(unrefined_phrase) {
+  let start_of_sanitization = 0;
+
+  if (is_punctuation(unrefined_phrase[0])) {
+    while (is_punctuation(unrefined_phrase[start_of_sanitization])) {
+      start_of_sanitization += 1;
+    }
+  }
+
+  let end_of_sanitization = start_of_sanitization;
+  for (let character_index = start_of_sanitization; character_index < unrefined_phrase.length; ++character_index) {
+    if (is_punctuation(unrefined_phrase[character_index])) {
+      end_of_sanitization = character_index;
+    }
+  }
+
+  return unrefined_phrase.slice(start_of_sanitization, end_of_sanitization+1);
+}
+
 function SearchBar({logstuff, add_output, update_output}) {
   const [search_string, update_search_string] = useState("");
 
   async function submit_entry() {
     const prompt = search_string;
-    let current_output = logstuff;
+    if (prompt.length) {
+      let current_output = logstuff;
 
-    current_output = add_output(current_output, log_entry("User", prompt)) ;
-    update_output(current_output);
-	  if (is_valid_url(prompt)) {
-		  const a=(await asdf(prompt)).data;
-		  console.log(a);
-		  for (let i = 0 ;i  < a.length; ++i) {
-			  current_output = add_output(current_output, log_entry("Bot", a[i]));
-		  }
-	  } else {
-		  update_search_string("");
-		  for (let i = 0; i < 2; ++i) {
-			  const lol = await cohere_generate({
-				  prompt: `${all_concatenative_text}. I would like to be given this role because I have `+ prompt +"",
-				  model: "xlarge",
-				  temperature: 0.65,
-				  k: 323,
-				  tokens: random_integer_between(15, 40)
-			  });
-			  current_output = add_output(current_output, log_entry("Bot", `${lol.text}`));
-		  }
-	  }
-    update_output(current_output);
+      current_output = add_output(current_output, log_entry("User", prompt)) ;
+      update_output(current_output);
+      if (is_valid_url(prompt)) {
+        const a=(await asdf(prompt)).data;
+        console.log(a);
+        for (let i = 0 ;i  < a.length; ++i) {
+          current_output = add_output(current_output, log_entry("Bot", a[i]));
+        }
+      } else {
+        update_search_string("");
+        for (let i = 0; i < 2; ++i) {
+          const lol = await cohere_generate({
+            prompt: `${all_concatenative_text}. I would like to be given this role because I have `+ prompt +"",
+            model: "xlarge",
+            temperature: 0.694,
+            k: 324,
+            tokens: random_integer_between(25, 40)
+          });
+          if (lol.text.length > 0) current_output = add_output(current_output, log_entry("Bot", prompt+` ${sanitize_phrase(lol.text)}`));
+        }
+      }
+      update_output(current_output);
+    }
   }
 
   return (
