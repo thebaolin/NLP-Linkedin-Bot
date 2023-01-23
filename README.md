@@ -1,5 +1,4 @@
-# SBUHacks2022
-Stony Brook University Hackathon Repo
+# UHired
 
 ## Team Members:
 Paulina Chang, Mandy Tang, Jerry Zhu, Ethan Tabachneck
